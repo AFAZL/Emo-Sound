@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:myapp/services/CRUD.dart';
 
 class ProfilePage extends StatelessWidget {
   final String email;
@@ -8,44 +8,37 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          CircleAvatar(
-            radius: 50,
-            backgroundColor: Colors.blue, // Change the background color as needed
-            child: Icon(
-              Icons.person,
-              size: 50,
-              color: Colors.white, // Change the icon color as needed
-            ),
-          ),
-          SizedBox(height: 20),
-          Text(
-            'xx', // Display the user's name and surname
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 10),
-          Text(
-            'Email: $email', // Display the user's email
-            style: TextStyle(fontSize: 16, color: Colors.grey),
-          ),
-          SizedBox(height: 10),
-          Text(
-            'GenMae', // Display the user's gender
-            style: TextStyle(fontSize: 16, color: Colors.grey),
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pushReplacementNamed(context, '/');
-            },
-            child: Text('Logout'),
-          ),
-        ],
+    print('Email in ProfilePage: $email'); 
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Profile'),
+      ),
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: readUserByName("User", email),
+        builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            Map<String, dynamic> userData = snapshot.data!;
+            return SingleChildScrollView(
+              padding: EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text('Name: ${userData['Name']}'),
+                  Text('Surname: ${userData['Surname']}'),
+                  Text('Email: ${userData['Email']}'),
+                  Text('Date of Birth: ${userData['DOB'] ?? 'N/A'}'),
+                  Text('Gender: ${userData['Gender']}'),
+                  // Add more fields as needed
+                ],
+              ),
+            );
+          }
+        },
       ),
     );
   }
 }
-

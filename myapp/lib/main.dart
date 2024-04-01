@@ -31,8 +31,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => LoginPage(), 
         '/home': (context) => HomePage(),
-        '/profile':(context) => ProfilePage(email: ' '), 
-        '/admin': (context) => AdminPage(email: ' '),
+        '/profile':(context) => ProfilePage(email: '',), 
+        '/admin': (context) => AdminPage(email: '',),
         '/UserAction': (context) => UserAction(),
         '/MusicAction': (context) => MusicAction(),
       },

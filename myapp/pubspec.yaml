@@ -43,7 +43,10 @@ dependencies:
   flutter_date_pickers: ^0.4.2
   pie_chart: ^5.0.0
   fl_chart: ^0.35.0
-
+  flutter_lints: ^1.0.0
+  email_auth:
+  email_otp: ^2.1.2
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

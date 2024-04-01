@@ -86,7 +86,8 @@ class _AdminPageState extends State<AdminPage> {
           'Admin Dashboard',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Color.fromARGB(255, 79, 39, 181),
+        backgroundColor: Color.fromARGB(255, 0, 0, 0),
+        iconTheme: IconThemeData(color: Colors.white),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.logout, color: Colors.white),
@@ -104,7 +105,7 @@ class _AdminPageState extends State<AdminPage> {
             children: <Widget>[
               DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 79, 39, 181),
+                  color: Color.fromARGB(255, 0, 0, 0),
                 ),
                 child: Text(
                   'Menu',
@@ -117,13 +118,13 @@ class _AdminPageState extends State<AdminPage> {
               ListTile(
                 title: Text('User Action'),
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, '/UserAction');
+                  Navigator.pushNamed(context, '/UserAction');
                 },
               ),
               ListTile(
                 title: Text('Music Action'),
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, '/MusicAction');
+                  Navigator.pushNamed(context, '/MusicAction');
                 },
               ),
               // Add more ListTile widgets for additional items

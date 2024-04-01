@@ -1,11 +1,14 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
+import 'package:myapp/uifiles/profile.dart';
 
 class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final arguments = ModalRoute.of(context)!.settings.arguments;
-    print(arguments);
+    final email = ModalRoute.of(context)!.settings.arguments;
+    print("Home $email");
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 79, 39, 181),
@@ -16,10 +19,10 @@ class HomePage extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () {
-                Navigator.pushReplacementNamed(
+                print('Email before navigation: $email');
+                Navigator.push(
                   context,
-                  '/profile',
-                  arguments: arguments,
+                  MaterialPageRoute(builder: (context) => ProfilePage(email: '$email'))
                 );
               },
               icon: Icon(
