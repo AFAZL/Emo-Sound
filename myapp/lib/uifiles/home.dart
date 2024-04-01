@@ -111,7 +111,7 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
-              height: 200, // Adjust the height of the banner as needed
+              height: 150, // Adjust the height of the banner as needed
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,

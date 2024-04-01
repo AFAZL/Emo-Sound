@@ -14,18 +14,19 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF242d5c), // Set background color to Color(0xFF242d5c)
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 79, 39, 181),
+        backgroundColor:Color(0xFF51cffa),
         title: Text(
           'Login',
           style: TextStyle(
-            color: Color.fromARGB(255, 241, 241, 241),
+            color: Color(0xFF242d5c),
           ),
         ),
       ),
       body: SingleChildScrollView( // Wrap with SingleChildScrollView
         child: Container(
-          color: Colors.white,
+          color: Color(0xFF242d5c),
           child: Column(
             children: [
               SizedBox(height: 32.0),
@@ -100,10 +101,10 @@ class LoginPage extends StatelessWidget {
                           },
                           child: Text(
                             'Sign In',
-                            style: TextStyle(color: Colors.white, fontSize: 18.0),
+                            style: TextStyle(color: Color(0xFF242d5c), fontSize: 18.0),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromARGB(255, 79, 39, 181),
+                            backgroundColor:Color(0xFF51cffa),
                             padding: EdgeInsets.symmetric(vertical: 16.0),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
@@ -122,7 +123,7 @@ class LoginPage extends StatelessWidget {
                       },
                       child: Text(
                         'Create an Account',
-                        style: TextStyle(color: Color.fromARGB(255, 79, 39, 181)),
+                        style: TextStyle(color: Color(0xFF51cffa)),
                       ),
                     ),
                   ],

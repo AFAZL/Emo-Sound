@@ -12,15 +12,17 @@ class ProfilePage extends StatelessWidget {
     print('Email in ProfilePage: $email'); 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
+        title: Text('Profile', style: TextStyle(color: Color(0xFF242d5c))), // Set text color to match the theme
+        backgroundColor: Color(0xFF51cffa), // Set background color of app bar
       ),
+      backgroundColor: Color(0xFF242d5c), // Set background color of the Scaffold
       body: FutureBuilder<Map<String, dynamic>>(
         future: readUserByName("User", email),
         builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text('Error: ${snapshot.error}', style: TextStyle(color: Colors.white))); // Set text color to white
           } else {
             Map<String, dynamic> userData = snapshot.data!;
             // Convert timestamp to DateTime object
@@ -46,21 +48,37 @@ class ProfilePage extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
+                            color: Colors.white, // Set text color to white
                           ),
                         ),
                       ],
                     ),
                   ),
                   SizedBox(height: 20),
-                  Text('Email: ${userData['Email']}'),
-                  Text('Date of Birth: $formattedDob'), // Display formatted date of birth
-                  Text('Gender: ${userData['Gender']}'),
+                  _buildFieldWithBorder('Email: ${userData['Email']}'),
+                  _buildFieldWithBorder('Date of Birth: $formattedDob'),
+                  _buildFieldWithBorder('Gender: ${userData['Gender']}'),
                   // Add more fields as needed
                 ],
               ),
             );
           }
         },
+      ),
+    );
+  } 
+
+  Widget _buildFieldWithBorder(String text) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.white), // Set border color to white
+        borderRadius: BorderRadius.circular(8.0), // Set border radius
+      ),
+      padding: EdgeInsets.all(8.0),
+      margin: EdgeInsets.symmetric(vertical: 8.0),
+      child: Text(
+        text,
+        style: TextStyle(fontSize: 30, color: Colors.white), // Set text size and color
       ),
     );
   }
