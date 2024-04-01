@@ -139,60 +139,64 @@ class _AdminPageState extends State<AdminPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      width: MediaQuery.of(context).size.width / 2.5,
-                      height: MediaQuery.of(context).size.width / 2.5,
-                      child: PieChart(
-                        PieChartData(
-                          sections: genderDataMap.entries.map((entry) {
-                            return PieChartSectionData(
-                              color: _getColor(entry.key),
-                              value: entry.value,
-                              title: '${entry.key} (${entry.value}%)',
-                              titleStyle: TextStyle(color: Colors.black),
-                            );
-                          }).toList(),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        width: MediaQuery.of(context).size.width / 2.5,
+                        height: MediaQuery.of(context).size.width / 2.5,
+                        child: PieChart(
+                          PieChartData(
+                            sections: genderDataMap.entries.map((entry) {
+                              return PieChartSectionData(
+                                color: _getColor(entry.key),
+                                value: entry.value,
+                                title: '${entry.key} (${entry.value}%)',
+                                titleStyle: TextStyle(color: Colors.black),
+                              );
+                            }).toList(),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      'Gender Distribution',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                  ],
+                      SizedBox(height: 20),
+                      Text(
+                        'Gender Distribution',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
                 ),
                 SizedBox(width: 20),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      width: MediaQuery.of(context).size.width / 2.5,
-                      height: MediaQuery.of(context).size.width / 2.5,
-                      child: PieChart(
-                        PieChartData(
-                          sections: emotionDataMap.entries.map((entry) {
-                            return PieChartSectionData(
-                              color: _getColor(entry.key),
-                              value: entry.value,
-                              title: '${entry.key} (${entry.value}%)',
-                              titleStyle: TextStyle(color: Colors.black),
-                            );
-                          }).toList(),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        width: MediaQuery.of(context).size.width / 2.5,
+                        height: MediaQuery.of(context).size.width / 2.5,
+                        child: PieChart(
+                          PieChartData(
+                            sections: emotionDataMap.entries.map((entry) {
+                              return PieChartSectionData(
+                                color: _getColor(entry.key),
+                                value: entry.value,
+                                title: '${entry.key} (${entry.value}%)',
+                                titleStyle: TextStyle(color: Colors.black),
+                              );
+                            }).toList(),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      'Emotion Distribution',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                  ],
+                      SizedBox(height: 20),
+                      Text(
+                        'Emotion Distribution',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

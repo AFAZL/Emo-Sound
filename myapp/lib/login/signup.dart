@@ -22,7 +22,8 @@ class SignUpPage extends StatelessWidget {
         title: Text('Sign Up', style: TextStyle(color: Color.fromARGB(255, 241, 241, 241))),
         backgroundColor: Color.fromARGB(255, 79, 39, 181),
       ),
-      body: Center(
+      body: SingleChildScrollView(
+      child: Center(
         child: Container(
           width: 350,
           child: Padding(
@@ -138,6 +139,7 @@ class SignUpPage extends StatelessWidget {
           ),
         ),
       ),
+    )
     );
   }
 

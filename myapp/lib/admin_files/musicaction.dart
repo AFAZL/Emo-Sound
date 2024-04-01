@@ -23,7 +23,9 @@ class MusicAction extends StatelessWidget {
           } else {
             List<Map<String, dynamic>> userData = snapshot.data ?? [];
             return SingleChildScrollView(
+              scrollDirection: Axis.horizontal, // Allow horizontal scrolling
               child: DataTable(
+                columnSpacing: 20, // Add spacing between columns
                 columns: [
                   DataColumn(label: Text('Name')),
                   DataColumn(label: Text('Type')),
@@ -37,22 +39,26 @@ class MusicAction extends StatelessWidget {
                     DataCell(Text(data['name'] ?? '')),
                     DataCell(Text(data['type'] ?? '')),
                     DataCell(Text(formattedDate)),
-                    DataCell(Row(
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.remove_circle),
-                          onPressed: () {
-                            // Remove action
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.add_circle),
-                          onPressed: () {
-                            // Add action
-                          },
-                        ),
-                      ],
-                    )),
+                    DataCell(
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.remove_circle),
+                            onPressed: () {
+                              // DeleteUser("User", data['Email']);
+                              // Fluttertoast.showToast(msg: "Deleted");
+                              Navigator.pushReplacementNamed(context, "/MusicAction");
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.add_circle),
+                            onPressed: () {
+                              // Add action
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                   ]);
                 }).toList(),
               ),
