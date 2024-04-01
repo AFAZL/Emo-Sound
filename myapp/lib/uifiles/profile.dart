@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/services/CRUD.dart';
+import 'package:intl/intl.dart';
 
 class ProfilePage extends StatelessWidget {
   final String email;
@@ -22,15 +23,37 @@ class ProfilePage extends StatelessWidget {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
             Map<String, dynamic> userData = snapshot.data!;
+            // Convert timestamp to DateTime object
+            DateTime? dob = userData['DOB']?.toDate();
+            // Format DateTime object as a string
+            String formattedDob = dob != null ? DateFormat('yyyy-MM-dd').format(dob) : 'N/A';
+
             return SingleChildScrollView(
               padding: EdgeInsets.all(20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text('Name: ${userData['Name']}'),
-                  Text('Surname: ${userData['Surname']}'),
+                  Center(
+                    child: Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundImage: AssetImage('assets/images/default_image.png'), // Placeholder image URL
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          '${userData['Name']} ${userData['Surname']}',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20),
                   Text('Email: ${userData['Email']}'),
-                  Text('Date of Birth: ${userData['DOB'] ?? 'N/A'}'),
+                  Text('Date of Birth: $formattedDob'), // Display formatted date of birth
                   Text('Gender: ${userData['Gender']}'),
                   // Add more fields as needed
                 ],
