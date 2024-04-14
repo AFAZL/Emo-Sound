@@ -127,6 +127,12 @@ class _AdminPageState extends State<AdminPage> {
                   Navigator.pushNamed(context, '/MusicAction');
                 },
               ),
+              ListTile(
+                title: Text('Music Adder'),
+                onTap: () {
+                  Navigator.pushNamed(context, '/MusicAdder');
+                },
+              )
               // Add more ListTile widgets for additional items
             ],
           ),

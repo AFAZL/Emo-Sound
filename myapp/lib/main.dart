@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:myapp/admin_files/musicadder.dart';
 import 'package:myapp/admin_files/musicaction.dart';
 import 'package:myapp/admin_files/useraction.dart';
 import 'package:myapp/firebase_options.dart';
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
         '/admin': (context) => AdminPage(email: '',),
         '/UserAction': (context) => UserAction(),
         '/MusicAction': (context) => MusicAction(),
+        '/MusicAdder':(context)=>MusicAdder(),
       },
       debugShowCheckedModeBanner: false,
     );

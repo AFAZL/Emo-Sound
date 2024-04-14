@@ -12,22 +12,22 @@ class ProfilePage extends StatelessWidget {
     print('Email in ProfilePage: $email'); 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile', style: TextStyle(color: Color(0xFF242d5c))), // Set text color to match the theme
-        backgroundColor: Color(0xFF51cffa), // Set background color of app bar
+        title: Text('Profile', style: TextStyle(color: Color(0xFF242d5c))), 
+        backgroundColor: Color(0xFF51cffa),
       ),
-      backgroundColor: Color(0xFF242d5c), // Set background color of the Scaffold
+      backgroundColor: Color(0xFF242d5c),
       body: FutureBuilder<Map<String, dynamic>>(
         future: readUserByName("User", email),
         builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}', style: TextStyle(color: Colors.white))); // Set text color to white
+            return Center(child: Text('Error: ${snapshot.error}', style: TextStyle(color: Colors.white)));
           } else {
             Map<String, dynamic> userData = snapshot.data!;
-            // Convert timestamp to DateTime object
+           
             DateTime? dob = userData['DOB']?.toDate();
-            // Format DateTime object as a string
+           
             String formattedDob = dob != null ? DateFormat('yyyy-MM-dd').format(dob) : 'N/A';
 
             return SingleChildScrollView(
@@ -48,7 +48,7 @@ class ProfilePage extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white, // Set text color to white
+                            color: Colors.white, 
                           ),
                         ),
                       ],
@@ -58,7 +58,6 @@ class ProfilePage extends StatelessWidget {
                   _buildFieldWithBorder('Email: ${userData['Email']}'),
                   _buildFieldWithBorder('Date of Birth: $formattedDob'),
                   _buildFieldWithBorder('Gender: ${userData['Gender']}'),
-                  // Add more fields as needed
                 ],
               ),
             );
