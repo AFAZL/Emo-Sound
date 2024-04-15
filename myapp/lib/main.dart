@@ -8,6 +8,7 @@ import 'package:myapp/login/login.dart';
 import 'package:myapp/admin_files/admin.dart';
 import 'package:myapp/uifiles/home.dart';
 import 'package:myapp/uifiles/profile.dart';
+import 'package:myapp/uifiles/test.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         '/UserAction': (context) => UserAction(),
         '/MusicAction': (context) => MusicAction(),
         '/MusicAdder':(context)=>MusicAdder(),
+        '/test':(context)=>TestPage(),
       },
       debugShowCheckedModeBanner: false,
     );

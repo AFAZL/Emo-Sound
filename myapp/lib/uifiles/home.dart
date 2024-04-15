@@ -99,8 +99,7 @@ class HomePage extends StatelessWidget {
               leading: Icon(Icons.settings, color: Color(0xFF242d5c)),
               title: Text('Settings', style: TextStyle(color: Color(0xFF242d5c))),
               onTap: () {
-                Navigator.pop(context);
-                // Navigate to settings page
+                Navigator.pushReplacementNamed(context,'/test');
               },
             ),
           ],
