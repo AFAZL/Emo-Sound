@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:myapp/model/user_model.dart';
+import 'package:myapp/services/CRUD.dart';
 import 'package:myapp/services/auth_service.dart';
 import 'package:flutter_date_pickers/flutter_date_pickers.dart' as dp;
 
@@ -10,9 +12,11 @@ class SignUpPage extends StatelessWidget {
   final TextEditingController _confirmPasswordController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
   final TextEditingController _genderController = TextEditingController();
-  final TextEditingController _name = TextEditingController();
-  final TextEditingController _surname = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _surnameController = TextEditingController();
   final AuthService _authService = AuthService();
+  
+  get user => null;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +29,7 @@ class SignUpPage extends StatelessWidget {
         ),
         backgroundColor: Color(0xFF51cffa),
       ),
-      backgroundColor: Color(0xFF242d5c), // Set the background color of the Scaffold
+      backgroundColor: Color(0xFF242d5c),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
@@ -33,8 +37,8 @@ class SignUpPage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20.0),
                 child: Image.asset(
-                  'assets/images/signuplogo.png', // Change the image path as per your asset
-                  height: 400, // Adjust the height of the image as needed
+                  'assets/images/signuplogo.png',
+                  height: 400,
                 ),
               ),
               Container(
@@ -46,20 +50,20 @@ class SignUpPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       TextField(
-                        controller: _name,
+                        controller: _nameController,
                         decoration: InputDecoration(
                           labelText: 'Name',
                           filled: true,
-                          fillColor: Colors.white, // Set the text field background color to white
+                          fillColor: Colors.white,
                         ),
                       ),
                       SizedBox(height: 16.0),
                       TextField(
-                        controller: _surname,
+                        controller: _surnameController,
                         decoration: InputDecoration(
                           labelText: 'Surname',
                           filled: true,
-                          fillColor: Colors.white, // Set the text field background color to white
+                          fillColor: Colors.white,
                         ),
                       ),
                       SizedBox(height: 16.0),
@@ -73,7 +77,7 @@ class SignUpPage extends StatelessWidget {
                             decoration: InputDecoration(
                               labelText: 'Date Of Birth',
                               filled: true,
-                              fillColor: Colors.white, // Set the text field background color to white
+                              fillColor: Colors.white,
                             ),
                           ),
                         ),
@@ -93,7 +97,7 @@ class SignUpPage extends StatelessWidget {
                         decoration: InputDecoration(
                           labelText: 'Gender',
                           filled: true,
-                          fillColor: Colors.white, // Set the text field background color to white
+                          fillColor: Colors.white,
                         ),
                       ),
                       SizedBox(height: 16.0),
@@ -102,7 +106,7 @@ class SignUpPage extends StatelessWidget {
                         decoration: InputDecoration(
                           labelText: 'Email',
                           filled: true,
-                          fillColor: Colors.white, // Set the text field background color to white
+                          fillColor: Colors.white,
                         ),
                       ),
                       SizedBox(height: 16.0),
@@ -111,7 +115,7 @@ class SignUpPage extends StatelessWidget {
                         decoration: InputDecoration(
                           labelText: 'Password',
                           filled: true,
-                          fillColor: Colors.white, // Set the text field background color to white
+                          fillColor: Colors.white,
                         ),
                         obscureText: true,
                       ),
@@ -121,7 +125,7 @@ class SignUpPage extends StatelessWidget {
                         decoration: InputDecoration(
                           labelText: 'Confirm Password',
                           filled: true,
-                          fillColor: Colors.white, // Set the text field background color to white
+                          fillColor: Colors.white,
                         ),
                         obscureText: true,
                       ),
@@ -129,7 +133,35 @@ class SignUpPage extends StatelessWidget {
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF51cffa)),
                         onPressed: () async {
-                          // Button onPressed logic
+                          String email = _emailController.text.trim();
+                          String password = _passwordController.text.trim();
+
+                          if (email == 'sumit@gmail.com' && password == "sumit@1029") {
+                            Navigator.pushReplacementNamed(
+                              context,
+                              '/admin',
+                              arguments: email,
+                            );
+                          } else if( email!= 'sumit@gmail.com' ) {
+                            User1? user = await _authService.registerWithEmailAndPassword(_emailController.text.trim(), _passwordController.text.trim());
+                            if (user != null) {
+                                DateTime? dateTime = DateTime.tryParse(_dobController.text.trim());
+                                createUser(_nameController.text.trim(), _surnameController.text.trim(), _emailController.text.trim(),dateTime,_genderController.text.trim());
+                      
+                                print('Email in ProfilePage: $_nameController');
+                              
+                              Navigator.pushReplacementNamed(
+                                context,
+                                '/home',
+                                arguments: email,
+                              );
+                            } else {
+                              Fluttertoast.showToast(
+                                msg: 'Login failed. Please try again.',
+                                backgroundColor: Colors.white,
+                              );
+                            }
+                          }
                         },
                         child: Text('Sign Up', style: TextStyle(color: Color(0xFF242d5c))),
                       ),
