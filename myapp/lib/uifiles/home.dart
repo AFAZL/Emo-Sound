@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:myapp/uifiles/MusicBasedOnEmoji/music_player_page.dart';
 import 'package:myapp/uifiles/profile.dart';
-import 'package:myapp/uifiles/music_player_page.dart'; // Import the MusicPlayerPage
 import 'package:just_audio/just_audio.dart'; // Import the just_audio package
 
 class HomePage extends StatelessWidget {
@@ -69,7 +69,7 @@ class HomePage extends StatelessWidget {
               title: Text('Mood Based Music',
                   style: TextStyle(color: Color(0xFF242d5c))),
               onTap: () {
-                Navigator.pushNamed(context, '/mood');
+                Navigator.pushNamed(context, '/MusicOnMood');
               },
             ),
             ListTile(
@@ -135,7 +135,20 @@ class HomePage extends StatelessWidget {
               ),
             ),
             _buildMediaCards(
-                context), // Pass the BuildContext to _buildMediaCards
+                context),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Top Songs',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            _buildMediaCards1(
+                context),// Pass the BuildContext to _buildMediaCards
           ],
         ),
       ),
@@ -151,10 +164,14 @@ class HomePage extends StatelessWidget {
         }
 
         final documents = snapshot.data!.docs;
+
+        // Filter documents based on the category field
+        final topSongs = documents.where((doc) => (doc.data() as Map<String, dynamic>)['category'] == 'Top Hit').toList();
+
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: documents.map((doc) {
+            children: topSongs.map((doc) {
               final data = doc.data() as Map<String, dynamic>;
               final title = data['title'] ?? '';
               final author = data['author'] ?? '';
@@ -173,6 +190,44 @@ class HomePage extends StatelessWidget {
       },
     );
   }
+
+  Widget _buildMediaCards1(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('media').snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return CircularProgressIndicator(); // Display a loading indicator while fetching data
+        }
+
+        final documents = snapshot.data!.docs;
+
+        // Filter documents based on the category field
+        final topSongs = documents.where((doc) => (doc.data() as Map<String, dynamic>)['category'] == 'Trending').toList();
+
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: topSongs.map((doc) {
+              final data = doc.data() as Map<String, dynamic>;
+              final title = data['title'] ?? '';
+              final author = data['author'] ?? '';
+              final category = data['category'] ?? '';
+              final imageUrl = data['imageUrl'] ?? '';
+              final musicUrl = data['musicUrl'] ?? '';
+              final type = data['type'] ?? '';
+
+              print('Title: $title, Image URL: $imageUrl');
+
+              return _buildCard(context, title, author, category, imageUrl,
+                  musicUrl, type); // Pass the BuildContext to _buildCard
+            }).toList(),
+          ),
+        );
+      },
+    );
+  }
+
+
 
   Widget _buildCard(BuildContext context, String title, String author,
       String category, String imageUrl, String musicUrl, String type) {

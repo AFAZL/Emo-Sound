@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/uifiles/MusicBasedOnMood/MusicOnEmoji.dart';
+import 'package:myapp/uifiles/MusicBasedOnEmoji/MusicOnEmoji.dart';
 
 class emojibased extends StatefulWidget {
   const emojibased({Key? key}) : super(key: key);
