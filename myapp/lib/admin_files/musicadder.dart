@@ -17,6 +17,8 @@ class _MusicAdderState extends State<MusicAdder> {
   String _selectedCategory = 'Top Hit';
   String? _imageUrl;
   String? _musicUrl;
+  String? _title;
+  String? _author;
 
   final List<String> musicTypes = ['Angry', 'Fear', 'Happy', 'Sad', 'Excited'];
   final List<String> musicCategories = ['Top Hit', 'Trending'];
@@ -66,6 +68,26 @@ class _MusicAdderState extends State<MusicAdder> {
                 }).toList(),
                 decoration: InputDecoration(
                   labelText: 'Category',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 20),
+              TextField(
+                onChanged: (value) {
+                  _title = value;
+                },
+                decoration: InputDecoration(
+                  labelText: 'Title',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 20),
+              TextField(
+                onChanged: (value) {
+                  _author = value;
+                },
+                decoration: InputDecoration(
+                  labelText: 'Author',
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -150,9 +172,11 @@ class _MusicAdderState extends State<MusicAdder> {
   }
 
   Future<void> _submitData() async {
-    if (_imageUrl != null && _musicUrl != null) {
+    if (_imageUrl != null && _musicUrl != null && _title != null && _author != null) {
       try {
         await FirebaseFirestore.instance.collection('media').add({
+          'title': _title,
+          'author': _author,
           'type': _selectedType,
           'category': _selectedCategory,
           'imageUrl': _imageUrl,
@@ -175,7 +199,7 @@ class _MusicAdderState extends State<MusicAdder> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please upload both image and music before submitting.'),
+          content: Text('Please fill all fields and upload both image and music before submitting.'),
         ),
       );
     }

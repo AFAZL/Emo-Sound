@@ -48,8 +48,9 @@ dependencies:
   email_otp: ^2.1.2
   firebase_storage: 
   file_picker: ^8.0.0+1
-  audioplayers: ^6.0.0
+  audioplayers: 
   image_picker: ^1.0.8
+  just_audio: ^0.9.37
 
   
 dev_dependencies:

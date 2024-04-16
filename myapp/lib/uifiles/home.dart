@@ -1,23 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myapp/uifiles/profile.dart';
+import 'package:myapp/uifiles/music_player_page.dart'; // Import the MusicPlayerPage
+import 'package:just_audio/just_audio.dart'; // Import the just_audio package
 
 class HomePage extends StatelessWidget {
-  final List<String> topSongs = [
-    'Song 1',
-    'Song 2',
-    'Song 3',
-    'Song 4',
-    'Song 5',
-  ];
-
-  final List<String> suggestions = [
-    'Suggestion 1',
-    'Suggestion 2',
-    'Suggestion 3',
-    'Suggestion 4',
-    'Suggestion 5',
-  ];
-
   @override
   Widget build(BuildContext context) {
     final email = ModalRoute.of(context)!.settings.arguments;
@@ -29,7 +16,7 @@ class HomePage extends StatelessWidget {
         backgroundColor: Color(0xFF51cffa),
         title: Text(
           'Home',
-          style: TextStyle(color: Color(0xFF242d5c) ),
+          style: TextStyle(color: Color(0xFF242d5c)),
         ),
         actions: [
           IconButton(
@@ -37,7 +24,8 @@ class HomePage extends StatelessWidget {
               print('Email before navigation: $email');
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ProfilePage(email: '$email')),
+                MaterialPageRoute(
+                    builder: (context) => ProfilePage(email: '$email')),
               );
             },
             icon: Icon(
@@ -77,10 +65,10 @@ class HomePage extends StatelessWidget {
                 // Navigate to home page
               },
             ),
-            
             ListTile(
               leading: Icon(Icons.music_note, color: Color(0xFF242d5c)),
-              title: Text('Emoji Based Music', style: TextStyle(color: Color(0xFF242d5c))),
+              title: Text('Emoji Based Music',
+                  style: TextStyle(color: Color(0xFF242d5c))),
               onTap: () {
                 Navigator.pop(context);
                 // Add navigation to Emoji Based Music page
@@ -88,18 +76,19 @@ class HomePage extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.mood, color: Color(0xFF242d5c)),
-              title: Text('Mood Based Music', style: TextStyle(color: Color(0xFF242d5c))),
+              title: Text('Mood Based Music',
+                  style: TextStyle(color: Color(0xFF242d5c))),
               onTap: () {
                 Navigator.pop(context);
                 // Add navigation to Mood Based Music page
               },
-
             ),
             ListTile(
               leading: Icon(Icons.settings, color: Color(0xFF242d5c)),
-              title: Text('Settings', style: TextStyle(color: Color(0xFF242d5c))),
+              title:
+                  Text('Settings', style: TextStyle(color: Color(0xFF242d5c))),
               onTap: () {
-                Navigator.pushReplacementNamed(context,'/test');
+                Navigator.pushReplacementNamed(context, '/test');
               },
             ),
           ],
@@ -121,7 +110,8 @@ class HomePage extends StatelessWidget {
                   ],
                 ),
                 image: DecorationImage(
-                  image: AssetImage('assets/images/banner.jpg'), // Placeholder image URL
+                  image: AssetImage(
+                      'assets/images/banner.jpg'), // Placeholder image URL
                   fit: BoxFit.cover,
                 ),
               ),
@@ -136,58 +126,129 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-            _buildSlider('Top Songs', topSongs),
-            _buildSlider('Suggestions for You', suggestions),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Trending Songs',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            _buildMediaCards(
+                context), // Pass the BuildContext to _buildMediaCards
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSlider(String title, List<String> items) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            title,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white), // Set text color to white
+  Widget _buildMediaCards(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('media').snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return CircularProgressIndicator(); // Display a loading indicator while fetching data
+        }
+
+        final documents = snapshot.data!.docs;
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: documents.map((doc) {
+              final data = doc.data() as Map<String, dynamic>;
+              final title = data['title'] ?? '';
+              final author = data['author'] ?? '';
+              final category = data['category'] ?? '';
+              final imageUrl = data['imageUrl'] ?? '';
+              final musicUrl = data['musicUrl'] ?? '';
+              final type = data['type'] ?? '';
+
+              print('Title: $title, Image URL: $imageUrl');
+
+              return _buildCard(context, title, author, category, imageUrl,
+                  musicUrl, type); // Pass the BuildContext to _buildCard
+            }).toList(),
           ),
-        ),
-        SizedBox(
-          height: 150,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              return Card(
-                margin: EdgeInsets.symmetric(horizontal: 8),
-                child: Container(
-                  width: 200,
-                  padding: EdgeInsets.all(8),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        items[index],
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      SizedBox(height: 8),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Add action for the button here
-                        },
-                        child: Text('Play'),
-                      ),
-                    ],
+        );
+      },
+    );
+  }
+
+  Widget _buildCard(BuildContext context, String title, String author,
+      String category, String imageUrl, String musicUrl, String type) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MusicPlayerPage(
+              musicUrl: musicUrl,
+              imageUrl: imageUrl,
+              title: title,
+              author: author,
+            ),
+          ),
+        );
+      },
+      child: Container(
+        width: 200, // Adjust the width of the card
+        child: Card(
+          margin: EdgeInsets.all(16),
+          child: Column(
+            children: [
+              imageUrl.isNotEmpty
+                  ? Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      height: 100,
+                      width: double.infinity,
+                      errorBuilder: (context, error, stackTrace) {
+                        print('Error loading image: $error');
+                        return Text('Error loading image');
+                      },
+                    )
+                  : Placeholder(
+                      fallbackHeight: 100,
+                      color: Colors.grey,
+                    ),
+              ListTile(
+                title: Text(title),
+                subtitle: Text('Author: $author'),
+              ),
+              ButtonBar(
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      // Navigate to MusicPlayerPage and pass the musicUrl
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MusicPlayerPage(
+                            musicUrl: musicUrl,
+                            imageUrl: imageUrl,
+                            title: title,
+                            author: author,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.play_arrow),
+                        SizedBox(width: 4),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
+                ],
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }
