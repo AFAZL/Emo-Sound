@@ -46,6 +46,8 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Color(0xFF242d5c)),
+        backgroundColor: Color(0xFF51cffa),
         title: Text('Music Player'),
       ),
       body: Column(

@@ -1,7 +1,5 @@
-import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:myapp/uifiles/MusicBasedOnMood/MusicOnEmoji.dart';
 
 class emojibased extends StatefulWidget {
   const emojibased({Key? key}) : super(key: key);
@@ -30,29 +28,35 @@ class _emojibasedState extends State<emojibased> {
               child: GridView.count(
                 crossAxisCount: 2,
                 children: [
-                  EmojiCard(
+                  EmojiButton(
                     title: "Angry",
-                    imagePath: "assets/images/angry.png", // You can replace this with your actual image path
+                    imagePath: "assets/images/angry.png",
+                    mood: "Angry",
                   ),
-                  EmojiCard(
+                  EmojiButton(
                     title: "Happy",
                     imagePath: "assets/images/happy.png",
+                    mood: "Happy",
                   ),
-                  EmojiCard(
+                  EmojiButton(
                     title: "Sad",
                     imagePath: "assets/images/sad.png",
+                    mood: "Sad",
                   ),
-                  EmojiCard(
+                  EmojiButton(
                     title: "Excited",
                     imagePath: "assets/images/Excited.png",
+                    mood: "Excited",
                   ),
-                  EmojiCard(
+                  EmojiButton(
                     title: "Fear",
-                    imagePath: "assets/images/fear.png",
+                    imagePath: "assets/images/Fear.png",
+                    mood: "Fear",
                   ),
-                  EmojiCard(
+                  EmojiButton(
                     title: "Love",
                     imagePath: "assets/images/Love.png",
+                    mood: "Love",
                   ),
                 ],
               ),
@@ -64,20 +68,32 @@ class _emojibasedState extends State<emojibased> {
   }
 }
 
-class EmojiCard extends StatelessWidget {
+class EmojiButton extends StatelessWidget {
   final String title;
   final String imagePath;
+  final String mood;
 
-  const EmojiCard({
+  const EmojiButton({
     required this.title,
     required this.imagePath,
+    required this.mood,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
+    return ElevatedButton(
+        onPressed: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MusicOnEmoji1(mood: '$mood')),
+          );
+        },
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.zero),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
