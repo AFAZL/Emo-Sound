@@ -87,6 +87,12 @@ flutter:
     - assets/images/banner.jpg
     - assets/images/default_image.png
     - assets/images/signuplogo.png
+    - assets/images/angry.png
+    - assets/images/Fear.png
+    - assets/images/happy.png
+    - assets/images/Excited.png
+    - assets/images/sad.png
+    - assets/images/Love.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

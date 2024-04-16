@@ -61,26 +61,23 @@ class HomePage extends StatelessWidget {
               leading: Icon(Icons.home, color: Color(0xFF242d5c)),
               title: Text('Home', style: TextStyle(color: Color(0xFF242d5c))),
               onTap: () {
-                Navigator.pop(context);
-                // Navigate to home page
+                Navigator.pushNamed(context, '/test');
               },
             ),
             ListTile(
               leading: Icon(Icons.music_note, color: Color(0xFF242d5c)),
-              title: Text('Emoji Based Music',
+              title: Text('Mood Based Music',
                   style: TextStyle(color: Color(0xFF242d5c))),
               onTap: () {
-                Navigator.pop(context);
-                // Add navigation to Emoji Based Music page
+                Navigator.pushNamed(context, '/mood');
               },
             ),
             ListTile(
               leading: Icon(Icons.mood, color: Color(0xFF242d5c)),
-              title: Text('Mood Based Music',
+              title: Text('Emoji Based Music',
                   style: TextStyle(color: Color(0xFF242d5c))),
               onTap: () {
-                Navigator.pop(context);
-                // Add navigation to Mood Based Music page
+                Navigator.pushNamed(context, '/emoji');
               },
             ),
             ListTile(
@@ -88,7 +85,7 @@ class HomePage extends StatelessWidget {
               title:
                   Text('Settings', style: TextStyle(color: Color(0xFF242d5c))),
               onTap: () {
-                Navigator.pushReplacementNamed(context, '/test');
+                Navigator.pushNamed(context, '/test');
               },
             ),
           ],
