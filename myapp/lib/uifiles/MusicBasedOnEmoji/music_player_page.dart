@@ -20,7 +20,6 @@ class MusicPlayerPage extends StatefulWidget {
 
 class _MusicPlayerPageState extends State<MusicPlayerPage> {
   final AudioPlayer _player = AudioPlayer();
-  bool _isPlaying = false;
 
   @override
   void initState() {
@@ -79,19 +78,32 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
               ),
             ),
           ),
+          StreamBuilder<Duration>(
+            stream: _player.positionStream,
+            builder: (context, snapshot) {
+              final position = snapshot.data ?? Duration.zero;
+              final duration = _player.duration ?? Duration.zero;
+              return Slider(
+                value: position.inSeconds.toDouble(),
+                min: 0.0,
+                max: duration.inSeconds.toDouble(),
+                onChanged: (value) {
+                  _player.seek(Duration(seconds: value.toInt()));
+                },
+              );
+            },
+          ),
           IconButton(
             onPressed: () async {
-              if (_isPlaying) {
+              if (_player.playing) {
                 await _player.pause();
               } else {
                 await _player.play();
               }
-              setState(() {
-                _isPlaying = !_isPlaying;
-              });
+              setState(() {});
             },
             icon: Icon(
-              _isPlaying ? Icons.pause : Icons.play_arrow,
+              _player.playing ? Icons.pause : Icons.play_arrow,
               size: 36,
             ),
           ),
