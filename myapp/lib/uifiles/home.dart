@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:myapp/uifiles/MusicBasedOnEmoji/emoji_based_music.dart';
 import 'package:myapp/uifiles/MusicBasedOnEmoji/music_player_page.dart';
 import 'package:myapp/uifiles/MusicOnMoodFace/recentlyplayed.dart';
 import 'package:myapp/uifiles/profile.dart';
@@ -79,7 +80,7 @@ class HomePage extends StatelessWidget {
               title: Text('Emoji Based Music',
                   style: TextStyle(color: Color(0xFF242d5c))),
               onTap: () {
-                Navigator.pushNamed(context, '/emoji');
+                Navigator.push(context,MaterialPageRoute(builder: (context)=> emojibased(email: email as String)));
               },
             ),
             ListTile(

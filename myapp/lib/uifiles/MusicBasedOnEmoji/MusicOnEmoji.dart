@@ -1,39 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myapp/uifiles/MusicBasedOnEmoji/music_player_page.dart';
-
-
+import 'package:myapp/uifiles/MusicOnMoodFace/recentlyplayed.dart';
+import 'package:myapp/uifiles/profile.dart';
+import 'package:myapp/services/CRUD.dart'; 
 
 class MusicOnEmoji1 extends StatelessWidget {
   final String mood;
+  final String email;
 
-  const MusicOnEmoji1({Key? key, required this.mood}) : super(key: key);
+  const MusicOnEmoji1({Key? key, required this.mood, required this.email}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Music for $mood'), // Display the mood in the app bar title
+        title: Text('Music for $mood'),
       ),
-      body: _buildMediaCards(context, mood), // Call _buildMediaCards and pass context and mood
+      body: _buildMediaCards(context, mood, email),
     );
   }
 }
 
-Widget _buildMediaCards(BuildContext context, String mood) {
+Widget _buildMediaCards(BuildContext context, String mood, String email) {
   return StreamBuilder<QuerySnapshot>(
     stream: FirebaseFirestore.instance.collection('media').snapshots(),
     builder: (context, snapshot) {
       if (!snapshot.hasData) {
-        return Center(child: CircularProgressIndicator()); // Display a loading indicator while fetching data
+        return Center(child: CircularProgressIndicator());
       }
 
       final documents = snapshot.data!.docs;
 
-      // Filter documents based on the category field
       final topSongs = documents.where((doc) => (doc.data() as Map<String, dynamic>)['type'] == mood).toList();
 
-      // Calculate the number of rows required
       int rowCount = (topSongs.length / 2).ceil();
 
       return ListView.builder(
@@ -44,9 +44,9 @@ Widget _buildMediaCards(BuildContext context, String mood) {
 
           return Row(
             children: [
-              if (startIndex < topSongs.length) _buildCard(context, topSongs[startIndex]),
+              if (startIndex < topSongs.length) _buildCard(context, topSongs[startIndex], email),
               SizedBox(width: 16),
-              if (endIndex < topSongs.length) _buildCard(context, topSongs[endIndex]),
+              if (endIndex < topSongs.length) _buildCard(context, topSongs[endIndex], email),
             ],
           );
         },
@@ -55,7 +55,7 @@ Widget _buildMediaCards(BuildContext context, String mood) {
   );
 }
 
-Widget _buildCard(BuildContext context, QueryDocumentSnapshot<Object?> song) {
+Widget _buildCard(BuildContext context, QueryDocumentSnapshot<Object?> song, String email) {
   final data = song.data() as Map<String, dynamic>;
   final title = data['title'] ?? '';
   final author = data['author'] ?? '';
@@ -64,8 +64,8 @@ Widget _buildCard(BuildContext context, QueryDocumentSnapshot<Object?> song) {
 
   return Expanded(
     child: GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => MusicPlayerPage(
@@ -76,6 +76,8 @@ Widget _buildCard(BuildContext context, QueryDocumentSnapshot<Object?> song) {
             ),
           ),
         );
+
+        addToRecentlyPlayed(email, title);
       },
       child: Card(
         margin: EdgeInsets.all(16),
@@ -84,19 +86,19 @@ Widget _buildCard(BuildContext context, QueryDocumentSnapshot<Object?> song) {
           children: [
             imageUrl.isNotEmpty
                 ? Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
-              height: 200,
-              width: double.infinity,
-              errorBuilder: (context, error, stackTrace) {
-                print('Error loading image: $error');
-                return Text('Error loading image');
-              },
-            )
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    height: 200,
+                    width: double.infinity,
+                    errorBuilder: (context, error, stackTrace) {
+                      print('Error loading image: $error');
+                      return Text('Error loading image');
+                    },
+                  )
                 : Placeholder(
-              fallbackHeight: 200,
-              color: Colors.grey,
-            ),
+                    fallbackHeight: 200,
+                    color: Colors.grey,
+                  ),
             ListTile(
               title: Text(title),
               subtitle: Text('Author: $author'),
@@ -105,7 +107,6 @@ Widget _buildCard(BuildContext context, QueryDocumentSnapshot<Object?> song) {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    // Navigate to MusicPlayerPage and pass the musicUrl
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -117,6 +118,7 @@ Widget _buildCard(BuildContext context, QueryDocumentSnapshot<Object?> song) {
                         ),
                       ),
                     );
+                    addToRecentlyPlayed(email, title);
                   },
                   child: Row(
                     mainAxisSize: MainAxisSize.min,

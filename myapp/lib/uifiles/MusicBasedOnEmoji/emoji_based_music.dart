@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/uifiles/MusicBasedOnEmoji/MusicOnEmoji.dart';
 
-class emojibased extends StatefulWidget {
-  const emojibased({Key? key}) : super(key: key);
+class emojibased extends StatelessWidget {
+  final String email;
 
-  @override
-  _emojibasedState createState() => _emojibasedState();
-}
-
-class _emojibasedState extends State<emojibased> {
-  String? downloadURL;
+  const emojibased({Key? key, required this.email}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,31 +27,37 @@ class _emojibasedState extends State<emojibased> {
                     title: "Angry",
                     imagePath: "assets/images/angry.png",
                     mood: "Angry",
+                    email: email,
                   ),
                   EmojiButton(
                     title: "Happy",
                     imagePath: "assets/images/happy.png",
                     mood: "Happy",
+                    email: email,
                   ),
                   EmojiButton(
                     title: "Sad",
                     imagePath: "assets/images/sad.png",
                     mood: "Sad",
+                    email: email,
                   ),
                   EmojiButton(
                     title: "Excited",
                     imagePath: "assets/images/Excited.png",
                     mood: "Excited",
+                    email: email,
                   ),
                   EmojiButton(
                     title: "Fear",
                     imagePath: "assets/images/Fear.png",
                     mood: "Fear",
+                    email: email,
                   ),
                   EmojiButton(
                     title: "Love",
                     imagePath: "assets/images/Love.png",
                     mood: "Love",
+                    email: email,
                   ),
                 ],
               ),
@@ -72,24 +73,27 @@ class EmojiButton extends StatelessWidget {
   final String title;
   final String imagePath;
   final String mood;
+  final String email;
 
   const EmojiButton({
     required this.title,
     required this.imagePath,
     required this.mood,
+    required this.email,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-        onPressed: () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => MusicOnEmoji1(mood: '$mood')),
-          );
-        },
+      onPressed: () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MusicOnEmoji1(mood: mood, email: email),
+          ),
+        );
+      },
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
         padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.zero),

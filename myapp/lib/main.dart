@@ -42,9 +42,9 @@ class MyApp extends StatelessWidget {
         '/UserAction': (context) => UserAction(),
         '/MusicAction': (context) => MusicAction(),
         '/MusicAdder':(context)=>MusicAdder(),
-        '/emoji':(context)=>emojibased(),
+        '/emoji':(context)=>emojibased(email:''),
         '/mood':(context)=>moodbased(),
-        '/MusicOnEmoji':(context)=>MusicOnEmoji1(mood: ''),
+        '/MusicOnEmoji':(context)=>MusicOnEmoji1(mood: '',email:''),
         '/MusicOnMood':(context)=>RecentlyPlayedPage(email: '',),
 
       },
