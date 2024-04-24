@@ -23,8 +23,12 @@ class HomePage extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.pop(
-                context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfilePage(email: email as String),
+                  ),
+                );
             },
             icon: Icon(
               Icons.person,

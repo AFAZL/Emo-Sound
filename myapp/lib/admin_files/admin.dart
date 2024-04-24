@@ -146,33 +146,7 @@ class _AdminPageState extends State<AdminPage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        height: MediaQuery.of(context).size.width / 2.5,
-                        child: PieChart(
-                          PieChartData(
-                            sections: genderDataMap.entries.map((entry) {
-                              return PieChartSectionData(
-                                color: _getColor(entry.key),
-                                value: entry.value,
-                                title: '${entry.key} (${entry.value}%)',
-                                titleStyle: TextStyle(color: Colors.black),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      Text(
-                        'Gender Distribution',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
+                  child: buildPieChart(genderDataMap, 'Gender Distribution'),
                 ),
                 SizedBox(width: 20),
                 Expanded(
@@ -301,6 +275,44 @@ class _AdminPageState extends State<AdminPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget buildPieChart(Map<String, double> dataMap, String title) {
+    // Filter out sections with zero values
+    final filteredDataMap = dataMap.entries.where((entry) => entry.value > 0).toList();
+
+    // Check if there are any sections left after filtering
+    if (filteredDataMap.isEmpty) {
+      return Text('No data available');
+    }
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Container(
+          width: MediaQuery.of(context).size.width / 2.5,
+          height: MediaQuery.of(context).size.width / 2.5,
+          child: PieChart(
+            PieChartData(
+              sections: filteredDataMap.map((entry) {
+                return PieChartSectionData(
+                  color: _getColor(entry.key),
+                  value: entry.value,
+                  title: '${entry.key} (${entry.value}%)',
+                  titleStyle: TextStyle(color: Colors.black),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+        SizedBox(height: 20),
+        Text(
+          title,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+      ],
     );
   }
 
