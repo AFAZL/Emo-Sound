@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class UserAction extends StatefulWidget {
@@ -24,7 +25,7 @@ class _UserActionState extends State<UserAction> {
     setState(() => _loading = true);
 
     final QuerySnapshot querySnapshot =
-    await FirebaseFirestore.instance.collection('User').get();
+        await FirebaseFirestore.instance.collection('User').get();
 
     setState(() {
       _userDocuments = querySnapshot.docs;
@@ -53,6 +54,30 @@ class _UserActionState extends State<UserAction> {
     });
   }
 
+  Future<void> _removeUser(DocumentSnapshot userDocument) async {
+  final userId = userDocument.id;
+
+  try {
+    // Delete the user from Firestore
+    await FirebaseFirestore.instance.collection('User').doc(userId).delete();
+
+    // Delete the user from Firebase Authentication
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await user.delete();
+    } else {
+      print('No user is currently signed in.');
+      return; // No need to proceed further if no user is signed in
+    }
+
+    // After deletion, refetch the data
+    await _fetchData();
+  } catch (e) {
+    print('Error deleting user: $e');
+  }
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,35 +89,50 @@ class _UserActionState extends State<UserAction> {
       body: _loading
           ? Center(child: CircularProgressIndicator())
           : Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              onChanged: _filterData,
-              decoration: InputDecoration(
-                labelText: 'Search',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
-              ),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: _filterData,
+                    decoration: InputDecoration(
+                      labelText: 'Search',
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                Flexible(
+                  child: ListView.builder(
+                    itemCount: _filteredUserDocuments.length,
+                    itemBuilder: (context, index) {
+                      final data = _filteredUserDocuments[index].data()
+                          as Map<String, dynamic>;
+                      return ListTile(
+                        title: Text(data['Name']?.toString() ?? ''),
+                        subtitle: Text(data['Email']?.toString() ?? ''),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () =>
+                                  _removeUser(_filteredUserDocuments[index]),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-          ),
-          Flexible(
-            child: ListView.builder(
-              itemCount: _filteredUserDocuments.length,
-              itemBuilder: (context, index) {
-                final data =
-                _filteredUserDocuments[index].data() as Map<String, dynamic>;
-                return ListTile(
-                  title: Text(data['Name']?.toString() ?? ''),
-                  subtitle: Text(data['Email']?.toString() ?? ''),
-                  trailing: Text(data['Gender']?.toString() ?? ''),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
     );
   }
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: UserAction(),
+  ));
 }
