@@ -14,7 +14,6 @@ createUser(String name, String surname, String email, DateTime? date,
   print("Database Done");
 }
 
-// Read
 // Read a particular document
 readUser(String collection, String docId) async {
   try {
@@ -99,5 +98,32 @@ Future<List<Map<String, dynamic>>> readCollectionByName(String collection) async
     return dataList;
   } catch (e) {
     throw 'Error Reading Collection:$collection';
+  }
+}
+
+
+Future<void> addToRecentlyPlayed(String email, String songName) async {
+  try {
+    // Get a reference to the recently played collection for the user
+    CollectionReference userCollection = FirebaseFirestore.instance.collection('RecentlyPlayed/$email/Songs');
+
+    // Query to find the document with the same song name
+    QuerySnapshot songQuery = await userCollection.where('songName', isEqualTo: songName).get();
+
+    // Delete the previous record of the same song name, if it exists
+    songQuery.docs.forEach((doc) async {
+      await userCollection.doc(doc.id).delete();
+      print('Previous record of song "$songName" deleted for user with email "$email"');
+    });
+
+    // Add the new document with a unique ID
+    await userCollection.add({
+      'songName': songName,
+      'timestamp': DateTime.now(),
+    });
+
+    print('Song "$songName" added to recently played for user with email "$email"');
+  } catch (e) {
+    print('Error adding song to recently played: $e');
   }
 }

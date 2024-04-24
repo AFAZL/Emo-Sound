@@ -11,18 +11,16 @@ class RecentlyPlayedPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Recently Played'), // Update the app bar title
+        iconTheme: IconThemeData(color: Color(0xFF242d5c)),
+        backgroundColor: Color(0xFF51cffa),
+        title: Text('Recently Played'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'Recently Played Songs', // Display a title for recently played songs
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
             SizedBox(height: 20),
-            _buildRecentlyPlayedList(email), // Display the list of recently played songs
+            _buildRecentlyPlayedList(email),
           ],
         ),
       ),
@@ -39,64 +37,67 @@ class RecentlyPlayedPage extends StatelessWidget {
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Display a loading indicator while fetching data
+          return CircularProgressIndicator();
         }
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         }
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return Text('No recently played songs.'); // Display a message if no songs are found
+          return Text('No recently played songs.');
         }
 
-        final List<String> songNames = snapshot.data!.docs.map((doc) => doc['songName'] as String).toList();
+        final List<DocumentSnapshot> songDocs = snapshot.data!.docs;
 
         return Expanded(
           child: ListView.builder(
-            itemCount: songNames.length,
+            itemCount: songDocs.length,
             itemBuilder: (context, index) {
-              return _buildSongCard(songNames[index]);
+              final songData = songDocs[index].data() as Map<String, dynamic>;
+              final String songName = songData['songName'] ?? '';
+
+              // Query the media collection to get the song details
+              return FutureBuilder<DocumentSnapshot>(
+                future: FirebaseFirestore.instance
+                    .collection('media')
+                    .where('title', isEqualTo: songName)
+                    .get()
+                    .then((querySnapshot) => querySnapshot.docs.first),
+                builder: (context, mediaSnapshot) {
+                  if (mediaSnapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  }
+                  if (mediaSnapshot.hasError) {
+                    return Text('Error: ${mediaSnapshot.error}');
+                  }
+                  if (!mediaSnapshot.hasData ||
+                      mediaSnapshot.data == null) {
+                    return Text('Song "$songName" not found.');
+                  }
+
+                  final mediaData =
+                      mediaSnapshot.data!.data() as Map<String, dynamic>;
+
+                  return ListTile(
+                    title: Text(mediaData['title']),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MusicPlayerPage(
+                            musicUrl: mediaData['musicUrl'] ?? '',
+                            imageUrl: mediaData['imageUrl'] ?? '',
+                            title: mediaData['title'] ?? '',
+                            author: mediaData['author'] ?? '',
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              );
             },
           ),
-        );
-      },
-    );
-  }
-
-  Widget _buildSongCard(String songName) {
-    return FutureBuilder<DocumentSnapshot>(
-      future: FirebaseFirestore.instance.collection('media').doc(songName).get(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Display a loading indicator while fetching data
-        }
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-        if (!snapshot.hasData || !snapshot.data!.exists) {
-          return Text('Song details not found for $songName');
-        }
-
-        final songData = snapshot.data!.data() as Map<String, dynamic>;
-
-        return ListTile(
-          title: Text(songData['title'] ?? ''),
-          subtitle: Text(songData['author'] ?? ''),
-          leading: CircleAvatar(
-            backgroundImage: NetworkImage(songData['imageUrl'] ?? ''),
-          ),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => MusicPlayerPage(
-                  musicUrl: songData['musicUrl'] ?? '',
-                  imageUrl: songData['imageUrl'] ?? '',
-                  title: songData['title'] ?? '',
-                  author: songData['author'] ?? '',
-                ),
-              ),
-            );
-          },
         );
       },
     );

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:myapp/uifiles/MusicBasedOnEmoji/music_player_page.dart';
+import 'package:myapp/uifiles/MusicOnMoodFace/recentlyplayed.dart';
 import 'package:myapp/uifiles/profile.dart';
-import 'package:just_audio/just_audio.dart'; // Import the just_audio package
+import '../services/CRUD.dart'; // Import the CRUD.dart file
 
 class HomePage extends StatelessWidget {
   @override
@@ -21,12 +22,8 @@ class HomePage extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              print('Email before navigation: $email');
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ProfilePage(email: '$email')),
-              );
+              Navigator.pop(
+                context);
             },
             icon: Icon(
               Icons.person,
@@ -66,10 +63,15 @@ class HomePage extends StatelessWidget {
             ),
             ListTile(
               leading: Icon(Icons.music_note, color: Color(0xFF242d5c)),
-              title: Text('Mood Based Music',
+              title: Text('Recently Played',
                   style: TextStyle(color: Color(0xFF242d5c))),
               onTap: () {
-                Navigator.pushNamed(context, '/MusicOnMood');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RecentlyPlayedPage(email: email as String),
+                  ),
+                );
               },
             ),
             ListTile(
@@ -134,8 +136,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-            _buildMediaCards(
-                context),
+            _buildMediaCards(context, email as String),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
@@ -147,15 +148,14 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-            _buildMediaCards1(
-                context),// Pass the BuildContext to _buildMediaCards
+            _buildMediaCards1(context, email as String), // Pass the BuildContext to _buildMediaCards
           ],
         ),
       ),
     );
   }
 
-  Widget _buildMediaCards(BuildContext context) {
+  Widget _buildMediaCards(BuildContext context, String email) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('media').snapshots(),
       builder: (context, snapshot) {
@@ -166,7 +166,10 @@ class HomePage extends StatelessWidget {
         final documents = snapshot.data!.docs;
 
         // Filter documents based on the category field
-        final topSongs = documents.where((doc) => (doc.data() as Map<String, dynamic>)['category'] == 'Top Hit').toList();
+        final topSongs = documents
+            .where((doc) =>
+                (doc.data() as Map<String, dynamic>)['category'] == 'Top Hit')
+            .toList();
 
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -183,7 +186,7 @@ class HomePage extends StatelessWidget {
               print('Title: $title, Image URL: $imageUrl');
 
               return _buildCard(context, title, author, category, imageUrl,
-                  musicUrl, type); // Pass the BuildContext to _buildCard
+                  musicUrl, type, email); // Pass the BuildContext to _buildCard
             }).toList(),
           ),
         );
@@ -191,7 +194,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildMediaCards1(BuildContext context) {
+  Widget _buildMediaCards1(BuildContext context, String email) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('media').snapshots(),
       builder: (context, snapshot) {
@@ -202,7 +205,10 @@ class HomePage extends StatelessWidget {
         final documents = snapshot.data!.docs;
 
         // Filter documents based on the category field
-        final topSongs = documents.where((doc) => (doc.data() as Map<String, dynamic>)['category'] == 'Trending').toList();
+        final topSongs = documents
+            .where((doc) =>
+                (doc.data() as Map<String, dynamic>)['category'] == 'Trending')
+            .toList();
 
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -219,18 +225,16 @@ class HomePage extends StatelessWidget {
               print('Title: $title, Image URL: $imageUrl');
 
               return _buildCard(context, title, author, category, imageUrl,
-                  musicUrl, type); // Pass the BuildContext to _buildCard
+                  musicUrl, type, email); // Pass the BuildContext to _buildCard
             }).toList(),
           ),
         );
       },
     );
   }
-
-
 
   Widget _buildCard(BuildContext context, String title, String author,
-      String category, String imageUrl, String musicUrl, String type) {
+      String category, String imageUrl, String musicUrl, String type, String email) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -268,7 +272,11 @@ class HomePage extends StatelessWidget {
                     ),
               ListTile(
                 title: Text(title),
-                subtitle: Text('Author: $author'),
+                subtitle: Text(
+                  'Author: $author',
+                  maxLines: 1, // Limit the subtitle to 1 line
+                  overflow: TextOverflow.ellipsis, // Handle overflow text with ellipsis
+                ),
               ),
               ButtonBar(
                 children: [
@@ -286,6 +294,11 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
                       );
+
+                      // Call the addToRecentlyPlayed function to add the song to the user's playlist
+                      String userEmail = email.toString(); // User's email
+                      String songName = title; // Song title
+                      addToRecentlyPlayed(userEmail, songName);
                     },
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
