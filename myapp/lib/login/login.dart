@@ -95,7 +95,7 @@ class LoginPage extends StatelessWidget {
                             } else {
                               Fluttertoast.showToast(
                                 msg: 'Login failed. Please try again.',
-                                backgroundColor: Colors.white,
+                                backgroundColor: Colors.black,
                               );
                             }
                           },

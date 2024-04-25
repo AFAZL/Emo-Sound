@@ -157,8 +157,8 @@ class SignUpPage extends StatelessWidget {
                               );
                             } else {
                               Fluttertoast.showToast(
-                                msg: 'Login failed. Please try again.',
-                                backgroundColor: Colors.white,
+                                msg: 'SignUp failed. Please try again.',
+                                backgroundColor: Colors.black,
                               );
                             }
                           }
